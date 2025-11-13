@@ -105,17 +105,46 @@ const stagedTexPath = path.join(stageRoot, `${base}.tex`);
 // keep track of images we need to copy (absolute src → staged rel)
 const toCopy: Array<{abs:string, rel:string}> = [];
 
-// 1) handle: \pandocbounded{\includegraphics[...]{pictures/...}}
-const reBounded = /\\pandocbounded\{\s*\\includegraphics(?:\[[^\]]*\])?\{(pictures\/[^}]+)\}\s*\}/g;
+function wrapInFigure(rel: string): string {
+  const labelBase = rel
+    .replace(/^pictures\//, "")
+    .replace(/\.[^.]+$/, "")
+    .replace(/[^A-Za-z0-9]+/g, "-");
 
-tex = tex.replace(reBounded, (_full, relPath: string) => {
-  const abs = path.join(vaultPath, relPath);
-  const relNormalized = relPath.replace(/\\/g, "/"); // safety
+  return (
+`\\begin{figure}[H]
+  \\centering
+  \\includegraphics[width=\\linewidth]{${rel}}
+  \\caption{}
+  \\label{fig:${labelBase}}
+\\end{figure}`
+  );
+}
+
+// 1) handle: \pandocbounded{\includegraphics[...]{pictures/...}}
+const reMdImgInTex = /!\{\[\}\{\[}([^{}]+\.png)\{\]\}\{\]\}/g;
+
+tex = tex.replace(reMdImgInTex, (_full, relPath: string) => {
+  // Decode URL encodings like %20
+  const fsRel = decodeURIComponent(relPath);
+  const relNormalized = fsRel.replace(/\\/g, "/");
+  const abs = path.join(vaultPath, relNormalized);
+
   toCopy.push({ abs, rel: relNormalized });
-  // normalize to our preferred includegraphics
-  return `\\includegraphics[width=\\linewidth]{${relNormalized}}`;
+
+  return wrapInFigure(relNormalized);
 });
 
+const reBounded = /\\pandocbounded\{\s*\\includegraphics(?:\[[^\]]*\])?\{(pictures\/[^}]+)\}\s*\}/g;
+tex = tex.replace(reBounded, (_full, relPath: string) => {
+  const fsRel = decodeURIComponent(relPath);
+  const rel = fsRel.replace(/\\/g, "/");
+  const abs = path.join(vaultPath, rel);
+
+  toCopy.push({ abs, rel: rel });
+
+  return wrapInFigure(rel);
+});
 // 2) handle: !{[}{[}pictures/... .md{]}{]}
 //   (escaped form of ![[pictures/...md]] that leaked into LaTeX)
 const reTldrawEscaped = /!\{\[\}\{\[\}(pictures\/[^{}]+?\.md)\{\]\}\{\]\}/g;
@@ -173,7 +202,7 @@ for (const match of Array.from(tex.matchAll(reTldrawEscaped))) {
 
   if (exported?.pngRel && exported?.pngAbs) {
     // replace the placeholder in tex with proper includegraphics
-    const replacement = `\\includegraphics[width=\\linewidth]{${exported.pngRel}}`;
+    const replacement = `\\begin{figure}[H] \\centering \\includegraphics[width=\\linewidth]{${exported.pngRel}} \\end{figure}`;
     tex = tex.replace(full, replacement);
     // image is already written under stageRoot/pictures/..., nothing more to copy here
   } else {
