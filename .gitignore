@@ -1,0 +1,17 @@
+# Node / build
+node_modules/
+dist/
+build/
+.esbuild/
+*.map
+package-lock.json
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Obsidian / vault junk
+.obsidian/
+*.zip

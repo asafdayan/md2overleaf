@@ -1,0 +1,10 @@
+{
+  "id": "md2overleaf",
+  "name": "Markdown to Overleaf",
+  "version": "0.2.0",
+  "minAppVersion": "1.4.0",
+  "author": "Asaf Dayan",
+  "authorUrl": "https://github.com/asafdayan",
+  "description": "Convert Markdown notes to LaTeX using Pandoc + Lua filters, package them with assets, and open the result directly in Overleaf.",
+  "isDesktopOnly": true
+}
