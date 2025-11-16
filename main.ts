@@ -55,7 +55,7 @@ export default class Md2OverleafPlugin extends Plugin {
     const filePath = path.join(vaultPath, file.path);
     const base = path.basename(filePath, ".md");
     const outDir = path.join(vaultPath, ".md2overleaf", base);
-    await fs.ensureDir(outDir);
+      await fs.ensureDir(outDir);
 
     const texPath = path.join(outDir, `${base}.tex`);
     const shellEnv = this.buildShellEnv();
@@ -259,6 +259,11 @@ export default class Md2OverleafPlugin extends Plugin {
           } catch (cleanupError) {
             console.warn("[md2overleaf] failed to clean temp dir", stageRoot, cleanupError);
           }
+        }
+        try {
+          await fs.remove(outDir);
+        } catch (cleanupError) {
+          console.warn("[md2overleaf] failed to clean export folder", outDir, cleanupError);
         }
       }
 

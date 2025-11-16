@@ -5329,6 +5329,11 @@ var Md2OverleafPlugin = class extends import_obsidian.Plugin {
             console.warn("[md2overleaf] failed to clean temp dir", stageRoot, cleanupError);
           }
         }
+        try {
+          await import_fs_extra2.default.remove(outDir);
+        } catch (cleanupError) {
+          console.warn("[md2overleaf] failed to clean export folder", outDir, cleanupError);
+        }
       }
     } catch (error) {
       console.error("Packaging or upload failed:", error);
