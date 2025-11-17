@@ -1,9 +1,4 @@
 {
-  "pandocPath": "pandoc",
-  "filterDir": "${vault}/final_filter.lua",
-  "templatePath": "${vault}/config.tex",
-  "metadataPath": "${vault}/pandoc-lua-filter/metadata.yaml",
-  "uploadHost": "https://transfer.sh",
-  "useTldraw": true,
+  "uploadHost": "https://x0.at",
   "autoOpen": true
 }

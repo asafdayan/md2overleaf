@@ -4,8 +4,8 @@
   "description": "Obsidian plugin to export Markdown notes to Overleaf projects using Pandoc + Lua filters.",
   "main": "main.js",
   "scripts": {
-    "dev": "esbuild main.ts --bundle --outfile=main.js --platform=node --external:obsidian --watch",
-    "build": "esbuild main.ts --bundle --outfile=main.js --platform=node --external:obsidian"
+    "dev": "esbuild main.ts --bundle --outfile=main.js --platform=node --external:obsidian --external:electron --watch",
+    "build": "esbuild main.ts --bundle --outfile=main.js --platform=node --external:obsidian --external:electron"
   },
   "keywords": [
     "obsidian",
